@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TaskFlow - Modern Full-Stack Productivity & Task Management SaaS Application" />
+  <title>TaskFlow — Productivity & Task Management</title>
+  
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="appSidebar" aria-label="Sidebar Navigation">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <div class="brand-icon">
+            <svg width="28" height="28" viewBox="0 0 32 32">
+              <defs>
+                <linearGradient id="tf-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#4F46E5" />
+                  <stop offset="100%" stop-color="#7C3AED" />
+                </linearGradient>
+              </defs>
+              <rect width="32" height="32" rx="8" fill="url(#tf-logo-grad)" />
+              <path d="M9 16.5L14 21.5L23 10.5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <span>TaskFlow</span>
+        </div>
+      </div>
+
+      <div class="sidebar-content">
+        <!-- Main Navigation Section -->
+        <div>
+          <div class="sidebar-section-title">Views</div>
+          <ul class="sidebar-nav-list sidebar-main-nav">
+            <li>
+              <button type="button" class="nav-item-btn active" data-nav="all">
+                <div class="nav-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                  <span>All Tasks</span>
+                </div>
+                <span class="nav-counter" id="countAllTasks">0</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="nav-item-btn" data-nav="today">
+                <div class="nav-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span>Today</span>
+                </div>
+                <span class="nav-counter" id="countToday">0</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="nav-item-btn" data-nav="upcoming">
+                <div class="nav-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  <span>Upcoming</span>
+                </div>
+                <span class="nav-counter" id="countUpcoming">0</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="nav-item-btn" data-nav="important">
+                <div class="nav-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  <span>Important</span>
+                </div>
+                <span class="nav-counter" id="countImportant">0</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="nav-item-btn" data-nav="completed">
+                <div class="nav-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <span>Completed</span>
+                </div>
+                <span class="nav-counter" id="countCompleted">0</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Categories Section -->
+        <div>
+          <div class="sidebar-section-title">
+            <span>Categories</span>
+            <button type="button" class="btn-icon-only" id="openAddCategoryBtn" title="Create Category" style="padding: 2px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+          </div>
+          <ul class="sidebar-nav-list" id="sidebarCategoriesList">
+            <!-- Dynamically populated categories -->
+          </ul>
+        </div>
+
+        <!-- Quick Add Action -->
+        <div style="margin-top: auto; padding: 0.5rem 0.25rem;">
+          <button type="button" class="btn btn-primary" id="sidebarAddTaskBtn" style="width: 100%;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Add New Task</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <span style="font-size: 0.75rem; color: var(--text-subtle);">v1.0.0 &bull; TaskFlow</span>
+        <button type="button" class="btn-icon-only" onclick="UI.openModal('shortcutsModal')" title="Keyboard Shortcuts (Press ?)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content App -->
+    <main class="app-main">
+      
+      <!-- Top Navigation Header -->
+      <header class="top-nav">
+        <div class="nav-left-group">
+          <button type="button" class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="Open mobile navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+
+          <!-- Search Input -->
+          <div class="search-box-wrapper">
+            <div class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+            <input 
+              type="text" 
+              class="search-input" 
+              id="globalSearchInput" 
+              placeholder="Search tasks, categories, or #tags..." 
+              aria-label="Search tasks"
+            />
+            <span class="search-shortcut-badge">Ctrl+K</span>
+          </div>
+        </div>
+
+        <div class="nav-actions">
+          <!-- Dark Mode Toggle Button -->
+          <button type="button" class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+
+          <!-- Notifications Icon -->
+          <button type="button" class="icon-btn" title="Notifications" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="notification-badge-dot"></span>
+          </button>
+
+          <!-- User Profile Dropdown -->
+          <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+            <button type="button" class="user-profile-btn" id="userProfileBtn" aria-label="User Account Menu">
+              <div class="user-avatar" id="userAvatar">AM</div>
+              <span class="user-name-label" id="userNameLabel">Alex Morgan</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+
+            <div class="dropdown-menu" id="profileDropdown">
+              <div style="padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-light);">
+                <div style="font-size: 0.75rem; color: var(--text-subtle);">Signed in</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);" id="dropdownUserEmail">demo@taskflow.dev</div>
+              </div>
+              <button type="button" class="dropdown-item" id="seedDemoMenuBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Load Sample Tasks</span>
+              </button>
+              <button type="button" class="dropdown-item" id="shortcutsMenuBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <span>Keyboard Shortcuts</span>
+              </button>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="dropdown-item" id="logoutMenuBtn" style="color: var(--priority-urgent);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Dashboard Viewport -->
+      <div class="dashboard-scrollable">
+        
+        <!-- View Header -->
+        <div class="view-header">
+          <div class="view-title-group">
+            <h1 id="viewTitle">All Tasks</h1>
+            <p class="view-subtitle">Organize, track progress, and accomplish goals seamlessly.</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="openAddTaskBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Add Task</span>
+          </button>
+        </div>
+
+        <!-- 5 Productivity Overview Stat Cards -->
+        <div class="stats-grid">
+          
+          <!-- Total Tasks -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Total Tasks</span>
+              <div class="stat-icon-wrapper stat-icon-total">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="statTotalTasks">0</div>
+            <div class="stat-subtext">Across all categories</div>
+          </div>
+
+          <!-- Completed Tasks -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Completed</span>
+              <div class="stat-icon-wrapper stat-icon-completed">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="statCompletedTasks">0</div>
+            <div class="stat-subtext" style="color: var(--status-completed);">Fully resolved</div>
+          </div>
+
+          <!-- Pending Tasks -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Pending</span>
+              <div class="stat-icon-wrapper stat-icon-pending">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="statPendingTasks">0</div>
+            <div class="stat-subtext">Needs attention</div>
+          </div>
+
+          <!-- Overdue Tasks -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Overdue</span>
+              <div class="stat-icon-wrapper stat-icon-overdue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="statOverdueTasks">0</div>
+            <div class="stat-subtext" style="color: var(--priority-urgent);">Past due date</div>
+          </div>
+
+          <!-- Completion Rate -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Completion Rate</span>
+              <div class="stat-icon-wrapper stat-icon-rate">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+              </div>
+            </div>
+            <div class="stat-rate-wrapper">
+              <div class="stat-value" id="statCompletionRate">0%</div>
+              <svg class="rate-progress-circle" viewBox="0 0 48 48">
+                <circle class="rate-circle-bg" cx="24" cy="24" r="20"></circle>
+                <circle class="rate-circle-bar" id="statCircleBar" cx="24" cy="24" r="20" stroke-dasharray="125.6 125.6" stroke-dashoffset="125.6"></circle>
+              </svg>
+            </div>
+            <div class="stat-subtext">Efficiency metric</div>
+          </div>
+
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="action-toolbar">
+          <div class="filter-group">
+            <!-- Status Filter -->
+            <select class="filter-select" id="filterStatus" aria-label="Filter by Status">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="overdue">Overdue</option>
+            </select>
+
+            <!-- Priority Filter -->
+            <select class="filter-select" id="filterPriority" aria-label="Filter by Priority">
+              <option value="">All Priorities</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+
+            <!-- Category Filter -->
+            <select class="filter-select" id="filterCategory" aria-label="Filter by Category">
+              <option value="">All Categories</option>
+            </select>
+
+            <!-- Sort By -->
+            <select class="filter-select" id="sortBySelect" aria-label="Sort Tasks">
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="due_date">Sort: Due Date</option>
+              <option value="priority">Sort: Priority</option>
+              <option value="title">Sort: Alphabetical</option>
+            </select>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <!-- Reset Filters Link -->
+            <button type="button" class="active-filter-indicator" onclick="Filters.resetAllFilters()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+              <span>Reset</span>
+            </button>
+
+            <!-- View Toggles (List vs Grid) -->
+            <div class="view-mode-toggles">
+              <button type="button" class="view-toggle-btn active" id="viewListBtn" title="List View">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              </button>
+              <button type="button" class="view-toggle-btn" id="viewGridBtn" title="Grid View">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Task List Container -->
+        <div class="tasks-container" id="tasksContainer">
+          <!-- Populated by JS -->
+        </div>
+
+      </div>
+
+      <!-- Floating Action Button for Mobile -->
+      <button type="button" class="mobile-fab-btn" id="mobileFabBtn" aria-label="Add Task">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </button>
+
+    </main>
+
+  </div>
+
+  <!-- =========================================================
+       MODALS
+       ========================================================= -->
+
+  <!-- Add / Edit Task Modal -->
+  <div class="modal-overlay" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="taskModalTitle">Create New Task</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="taskModal" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <form id="taskForm">
+        <div class="modal-body">
+          
+          <!-- Title Input -->
+          <div class="form-group">
+            <label class="form-label" for="taskTitle">
+              <span>Task Title <span class="required-star">*</span></span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input" 
+              id="taskTitle" 
+              placeholder="e.g., Build authentication API" 
+              maxlength="255" 
+              required 
+            />
+            <div class="form-error-msg" id="taskTitleError"></div>
+          </div>
+
+          <!-- Description Textarea -->
+          <div class="form-group">
+            <label class="form-label" for="taskDescription">Description</label>
+            <textarea 
+              class="form-textarea" 
+              id="taskDescription" 
+              placeholder="Add key notes, steps, or requirements..."
+            ></textarea>
+          </div>
+
+          <!-- Priority Selector Chips -->
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <div class="priority-selector-group">
+              <label class="priority-radio-option">
+                <input type="radio" name="priority" value="low" />
+                <span class="priority-label-chip chip-low">Low</span>
+              </label>
+              <label class="priority-radio-option">
+                <input type="radio" name="priority" value="medium" checked />
+                <span class="priority-label-chip chip-medium">Medium</span>
+              </label>
+              <label class="priority-radio-option">
+                <input type="radio" name="priority" value="high" />
+                <span class="priority-label-chip chip-high">High</span>
+              </label>
+              <label class="priority-radio-option">
+                <input type="radio" name="priority" value="urgent" />
+                <span class="priority-label-chip chip-urgent">Urgent</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Category and Status Row -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="taskCategory">Category</label>
+              <select class="form-select" id="taskCategory">
+                <option value="">Select Category</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.25rem;">
+                <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8125rem; cursor: pointer;">
+                  <input type="radio" name="status" value="pending" checked /> Pending
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8125rem; cursor: pointer;">
+                  <input type="radio" name="status" value="in_progress" /> In Progress
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8125rem; cursor: pointer;">
+                  <input type="radio" name="status" value="completed" /> Completed
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Due Date & Time Row -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="taskDueDate">Due Date</label>
+              <input type="date" class="form-input" id="taskDueDate" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="taskDueTime">Due Time</label>
+              <input type="time" class="form-input" id="taskDueTime" />
+            </div>
+          </div>
+
+          <!-- Tags Input -->
+          <div class="form-group">
+            <label class="form-label" for="taskTags">
+              <span>Tags (comma separated)</span>
+            </label>
+            <input type="text" class="form-input" id="taskTags" placeholder="e.g. frontend, college, urgent" />
+          </div>
+
+          <!-- Important Flag -->
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+            <input type="checkbox" id="taskImportant" style="width: 16px; height: 16px; accent-color: var(--primary);" />
+            <label for="taskImportant" style="font-size: 0.85rem; font-weight: 500; cursor: pointer;">Mark as Important / Starred</label>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="taskModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="taskSubmitBtn">Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteConfirmModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="modal-card" style="max-width: 420px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="deleteModalTitle">Delete Task?</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="deleteConfirmModal" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+          Are you sure you want to permanently delete this task? This action will remove it from the database and cannot be undone.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="deleteConfirmModal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Category Modal -->
+  <div class="modal-overlay" id="categoryModal" role="dialog" aria-modal="true" aria-labelledby="catModalTitle">
+    <div class="modal-card" style="max-width: 420px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="catModalTitle">Create New Category</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="categoryModal" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <form id="categoryForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="categoryNameInput">Category Name <span class="required-star">*</span></label>
+            <input type="text" class="form-input" id="categoryNameInput" placeholder="e.g. Marketing, Fitness, Freelance" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="categoryColorInput">Category Color</label>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <input type="color" id="categoryColorInput" value="#4F46E5" style="width: 44px; height: 38px; border: 1px solid var(--border-light); border-radius: 6px; cursor: pointer; background: none; padding: 2px;" />
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Pick an accent color for cards and sidebar</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="categoryModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Authentication Modal (Sign In / Register) -->
+  <div class="modal-overlay" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="authTitle">Welcome to TaskFlow</h2>
+          <p style="font-size: 0.775rem; color: var(--text-muted); margin-top: 0.2rem;" id="authSubtitle">Sign in to manage and streamline your productivity</p>
+        </div>
+      </div>
+      <form id="authForm">
+        <div class="modal-body">
+          
+          <!-- Name Field (Register only) -->
+          <div class="form-group" id="authNameGroup" style="display: none;">
+            <label class="form-label" for="authName">Full Name <span class="required-star">*</span></label>
+            <input type="text" class="form-input" id="authName" placeholder="e.g. Alex Morgan" />
+            <div class="form-error-msg" id="authNameError"></div>
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-group">
+            <label class="form-label" for="authEmail">Email Address <span class="required-star">*</span></label>
+            <input type="email" class="form-input" id="authEmail" placeholder="you@domain.com" required />
+            <div class="form-error-msg" id="authEmailError"></div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <label class="form-label" for="authPassword">Password <span class="required-star">*</span></label>
+            <input type="password" class="form-input" id="authPassword" placeholder="Minimum 6 characters" required />
+            <div class="form-error-msg" id="authPasswordError"></div>
+          </div>
+
+          <!-- Demo Account Helper Box -->
+          <div style="background-color: var(--bg-surface-hover); border: 1px dashed var(--border-light); border-radius: var(--radius-sm); padding: 0.75rem; margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-main);">Portfolio / Quick Demo</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">demo@taskflow.dev</div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="demoLoginBtn">Use Demo Login</button>
+          </div>
+
+        </div>
+        <div class="modal-footer" style="justify-content: space-between;">
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            <span id="authToggleText">Don't have an account?</span>
+            <button type="button" id="authToggleModeBtn" data-mode="register" style="color: var(--primary); font-weight: 600; margin-left: 4px;">Register now</button>
+          </div>
+          <button type="submit" class="btn btn-primary" id="authSubmitBtn">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-overlay" id="shortcutsModal" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="shortcutsTitle">Keyboard Shortcuts</h2>
+        <button type="button" class="modal-close-btn" data-close-modal="shortcutsModal" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-light);">
+            <span style="font-size: 0.875rem;">Focus Search Bar</span>
+            <kbd style="padding: 2px 6px; background: var(--bg-surface-hover); border: 1px solid var(--border-light); border-radius: 4px; font-size: 0.75rem;">Ctrl + K</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-light);">
+            <span style="font-size: 0.875rem;">Create New Task</span>
+            <kbd style="padding: 2px 6px; background: var(--bg-surface-hover); border: 1px solid var(--border-light); border-radius: 4px; font-size: 0.75rem;">C / Ctrl + N</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-light);">
+            <span style="font-size: 0.875rem;">Close Active Modal</span>
+            <kbd style="padding: 2px 6px; background: var(--bg-surface-hover); border: 1px solid var(--border-light); border-radius: 4px; font-size: 0.75rem;">Escape</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.875rem;">Open Shortcuts Help</span>
+            <kbd style="padding: 2px 6px; background: var(--bg-surface-hover); border: 1px solid var(--border-light); border-radius: 4px; font-size: 0.75rem;">?</kbd>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="shortcutsModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+/* =========================================================
+   TaskFlow - Responsive Stylesheet
+   Breakpoints for Tablets, Mobile, and Drawer Navigation
+   ========================================================= */
+
+/* Mobile Backdrop for Sidebar Drawer */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Floating Action Button (FAB) for Mobile */
+.mobile-fab-btn {
+  display: none;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-xl);
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 80;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.mobile-fab-btn:active {
+  transform: scale(0.92);
+}
+
+/* --- Tablet Breakpoint (max-width: 1024px) --- */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dashboard-scrollable {
+    padding: 1.25rem 1.5rem 3rem;
+  }
+}
+
+/* --- Mobile Breakpoint (max-width: 768px) --- */
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+  }
+
+  .app-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .search-shortcut-badge {
+    display: none;
+  }
+
+  .top-nav {
+    padding: 0 1rem;
+  }
+
+  .dashboard-scrollable {
+    padding: 1rem 1rem 5rem;
+    gap: 1.25rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .stat-card:last-child {
+    grid-column: span 2;
+  }
+
+  .action-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .filter-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .view-mode-toggles {
+    display: none; /* List view default on mobile */
+  }
+
+  .tasks-container.grid-view {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .task-card {
+    padding: 0.875rem 1rem;
+  }
+
+  .task-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modal-card {
+    max-height: 95vh;
+    border-radius: var(--radius-md);
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .priority-selector-group {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mobile-fab-btn {
+    display: flex;
+  }
+
+  .toast-container {
+    left: 1rem;
+    right: 1rem;
+    top: 1rem;
+  }
+
+  .toast {
+    max-width: 100%;
+    min-width: unset;
+  }
+}
+
+/* Extra Small Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .user-name-label {
+    display: none;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card:last-child {
+    grid-column: span 1;
+  }
+
+  .view-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
