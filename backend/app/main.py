@@ -144,6 +144,17 @@ if frontend_dir.exists() and frontend_dir.is_dir():
     app.mount("/js", StaticFiles(directory=str(frontend_dir / "js")), name="js")
     app.mount("/assets", StaticFiles(directory=str(frontend_dir / "assets")), name="assets")
 
+    from fastapi.responses import HTMLResponse
+
     @app.get("/", include_in_schema=False)
     async def serve_index():
-        return FileResponse(str(frontend_dir / "index.html"))
+        index_file = frontend_dir / "index.html"
+        content = index_file.read_text(encoding="utf-8")
+        return HTMLResponse(
+            content=content,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
