@@ -348,7 +348,13 @@ const Tasks = {
     if (form) form.reset();
 
     document.getElementById("taskModalTitle").textContent = "Create New Task";
-    document.getElementById("taskSubmitBtn").textContent = "Create Task";
+    const submitBtn = document.getElementById("taskSubmitBtn");
+    if (submitBtn) {
+      submitBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <span>Save to Dashboard</span>
+      `;
+    }
     
     // Default priority & status
     const medRadio = document.querySelector('input[name="priority"][value="medium"]');
@@ -366,7 +372,13 @@ const Tasks = {
     if (form) form.reset();
 
     document.getElementById("taskModalTitle").textContent = "Edit Task";
-    document.getElementById("taskSubmitBtn").textContent = "Save Changes";
+    const submitBtn = document.getElementById("taskSubmitBtn");
+    if (submitBtn) {
+      submitBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <span>Save Changes</span>
+      `;
+    }
 
     try {
       const resp = await API.getTaskById(taskId);
@@ -460,7 +472,11 @@ const Tasks = {
       UI.showToast("Error", err.message, "error");
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = this.activeTaskId ? "Save Changes" : "Create Task";
+      const btnText = this.activeTaskId ? "Save Changes" : "Save to Dashboard";
+      submitBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <span>${btnText}</span>
+      `;
     }
   },
 
