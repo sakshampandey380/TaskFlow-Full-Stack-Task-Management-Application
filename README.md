@@ -1,287 +1,642 @@
-# TaskFlow — Production-Ready Full-Stack Task & Productivity Management
+# 📝 TaskFlow — Full-Stack Task Management Application
 
-> A high-performance, modern SaaS-style productivity application engineered with a **FastAPI (Python)** backend, **MySQL / MariaDB (XAMPP)** relational persistence, and a responsive **Vanilla HTML5 / Modern CSS / JavaScript** frontend.
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-D71F00?style=flat)](https://www.sqlalchemy.org)
+[![MySQL](https://img.shields.io/badge/MySQL-InnoDB-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com)
+[![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Testing](https://img.shields.io/badge/Testing-Automated-10B981?style=flat&logo=pytest&logoColor=white)]()
 
-![TaskFlow Logo](frontend/assets/favicon.svg)
+**TaskFlow** is a modern full-stack task and productivity management application designed to provide authenticated users with a structured and efficient way to create, organize, track, and complete daily tasks. The application combines a **FastAPI REST backend**, **SQLAlchemy ORM**, **MySQL relational database**, and a **responsive vanilla HTML5/CSS3/JavaScript frontend** to provide a complete task-management workflow.
 
----
+TaskFlow goes beyond basic CRUD functionality by implementing JWT-based authentication, bcrypt password hashing, authorization, task priorities, due dates, categories, tags, reminders, search, filtering, sorting, important-task management, completion tracking, statistics, user settings, responsive layouts, light/dark themes, loading states, toast notifications, dialogs, keyboard shortcuts, and optimized task interactions.
 
-## 🌟 Overview
-
-**TaskFlow** is designed from the ground up to reflect modern productivity dashboards like Linear, Todoist, and Notion. It goes far beyond typical toy CRUD tutorials by featuring:
-
-- Real-time task progress computation and statistics tracking
-- Full user authentication with **JWT** and **bcrypt** password hashing
-- Relational data modeling with foreign keys, many-to-many tag relationships, and cascade behaviors
-- Instant optimistic UI checkbox updates synchronized directly to MySQL
-- Keyboard shortcuts for rapid power-user productivity (`Ctrl+K`, `C`, `Esc`, `?`)
-- Seamless Light / Dark theme system with persistent storage
-- Interactive, accessible modals adhering to modern web accessibility principles
+The project demonstrates practical full-stack development across backend API architecture, relational database design, authentication, authorization, validation, frontend/backend integration, responsive UI development, automated testing, and secure application organization.
 
 ---
 
-## 🛠 Tech Stack
+## 📑 Table of Contents
 
-| Domain | Technology | Details |
-| :--- | :--- | :--- |
-| **Backend** | **Python 3.11+ / FastAPI** | High performance asynchronous REST API with Pydantic v2 schemas and validation |
-| **Database** | **MySQL (InnoDB) via XAMPP** | Database: `todo-application` with UTF-8 (`utf8mb4_unicode_ci`) encoding |
-| **ORM** | **SQLAlchemy 2.0 + PyMySQL** | Connection pooling, relational mappings, cascades, indexes |
-| **Authentication** | **JWT (python-jose) + bcrypt** | Secure Bearer authorization header with salted hashing |
-| **Frontend** | **HTML5, CSS3, Vanilla JS** | Modular architecture, design tokens, zero-build-step requirement |
-| **Testing** | **unittest & FastAPI TestClient** | Automated integration tests for auth, CRUD, validation, 404s, stats |
+- [Architectural Overview](#-architectural-overview)
+- [Key Features](#-key-features)
+- [Technology Stack](#-technology-stack)
+- [Project Directory Structure](#-project-directory-structure)
+- [Database Architecture](#-database-architecture)
+- [Environment Variables](#-environment-variables)
+- [Local Setup](#-local-setup)
+- [Running the Application](#-running-the-application)
+- [Interactive API Documentation](#-interactive-api-documentation)
+- [REST API Endpoints](#-rest-api-endpoints)
+- [Task Workflow](#-task-workflow)
+- [Testing](#-testing)
+- [Security](#-security)
+- [Key Learning Outcomes](#-key-learning-outcomes)
+- [Developer](#-developer)
+- [License](#-license)
 
 ---
 
-## 📁 Project Architecture
+## 🏛️ Architectural Overview
+
+```mermaid
+flowchart TD
+    User([User / Browser]) --> Frontend[Vanilla HTML / CSS / JavaScript]
+
+    Frontend -->|REST API + JWT| FastAPI[FastAPI REST API]
+
+    subgraph Backend["FastAPI Backend"]
+        Auth[JWT Authentication]
+        Routes[API Routes]
+        Validation[Pydantic Validation]
+        Logic[Business Logic]
+        ORM[SQLAlchemy ORM]
+    end
+
+    FastAPI --> Auth
+    Auth --> Routes
+    Routes --> Validation
+    Routes --> Logic
+    Logic --> ORM
+
+    ORM -->|PyMySQL| Database[(MySQL Database)]
+
+    Database --> Users[(Users)]
+    Database --> Tasks[(Tasks)]
+    Database --> Categories[(Categories)]
+    Database --> Tags[(Tags)]
+    Database --> Reminders[(Task Reminders)]
+```
+
+---
+
+## ✨ Key Features
+
+### 🔐 Authentication & User Management
+
+- User registration
+- User login
+- JWT-based authentication
+- Secure bcrypt password hashing
+- Protected API endpoints
+- User-specific task access
+- Authorization checks
+- User settings management
+- Authentication validation
+
+### 📝 Task Management
+
+- Create tasks
+- View tasks
+- Update tasks
+- Delete tasks
+- Mark tasks as completed
+- Mark tasks as incomplete
+- Mark tasks as important
+- Set task priorities
+- Set due dates
+- Add task descriptions
+- Assign categories
+- Add multiple tags
+- Add reminders
+- Track pending tasks
+- Track completed tasks
+
+### 🔎 Search, Filter & Sort
+
+- Keyword search
+- Category filtering
+- Tag filtering
+- Priority filtering
+- Completion filtering
+- Important-task filtering
+- Due-date filtering
+- Sorting
+- Status-based organization
+
+### 📊 Dashboard & Statistics
+
+The application provides task statistics such as:
+
+- Total tasks
+- Completed tasks
+- Pending tasks
+- Important tasks
+- Priority distribution
+- Category organization
+- Task completion progress
+
+### 🗂️ Categories & Tags
+
+Tasks can be organized using:
+
+- Custom categories
+- Multiple tags
+- Task-tag relationships
+- Category filtering
+- Tag filtering
+
+### ⏰ Reminders
+
+The application supports task reminders and due-date management so users can organize time-sensitive work.
+
+### 🎨 User Interface
+
+- Responsive design
+- Mobile-friendly layout
+- Desktop-friendly layout
+- Light theme
+- Dark theme
+- System theme support
+- List view
+- Grid view
+- Toast notifications
+- Loading skeletons
+- Dialogs and confirmation modals
+- Keyboard shortcuts
+- Optimistic task completion
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Backend | Python 3.11+ / FastAPI | REST API |
+| ORM | SQLAlchemy | Database abstraction |
+| Database Driver | PyMySQL | MySQL connectivity |
+| Database | MySQL / MariaDB-compatible | Data storage |
+| Authentication | JWT | Secure authentication |
+| Password Security | bcrypt | Password hashing |
+| Validation | Pydantic | Request/response validation |
+| Frontend | HTML5 / CSS3 / Vanilla JavaScript | Web interface |
+| API Docs | Swagger / ReDoc | API documentation |
+| Testing | unittest / FastAPI TestClient | API testing |
+| Development | VS Code / Git / GitHub | Development workflow |
+
+---
+
+## 📁 Project Directory Structure
 
 ```text
 QSkills - Task -1/
 │
 ├── backend/
 │   ├── app/
-│   │   ├── __init__.py
-│   │   ├── main.py              # FastAPI application, CORS, static mounts, exception handlers
-│   │   ├── config.py            # Pydantic BaseSettings (.env reader)
-│   │   ├── database.py          # SQLAlchemy engine, session maker, get_db dependency
-│   │   ├── auth/
-│   │   │   ├── security.py      # bcrypt hashing and JWT token generator
-│   │   │   └── deps.py          # get_current_user dependency
-│   │   ├── models/              # SQLAlchemy relational models
-│   │   │   ├── user.py          # users table
-│   │   │   ├── task.py          # tasks table
-│   │   │   ├── category.py      # categories table
-│   │   │   ├── tag.py           # tags and task_tags association table
-│   │   │   ├── reminder.py      # task_reminders table
-│   │   │   └── settings.py      # user_settings table
-│   │   ├── schemas/             # Pydantic validation schemas
-│   │   │   ├── common.py        # Generic APIResponse envelope
-│   │   │   ├── user.py          # UserRegister, UserLogin, UserOut
-│   │   │   ├── task.py          # TaskCreate, TaskUpdate, TaskOut
-│   │   │   ├── category.py      # Category schemas
-│   │   │   ├── tag.py           # Tag schemas
-│   │   │   └── stats.py         # TaskStatsOut schema
-│   │   ├── routes/              # Modular API routers
-│   │   │   ├── auth.py          # /api/auth (register, login, me, logout)
-│   │   │   ├── tasks.py         # /api/tasks (CRUD, toggle-complete, stats, seed-demo)
-│   │   │   ├── categories.py    # /api/categories (CRUD)
-│   │   │   ├── tags.py          # /api/tags
-│   │   │   └── settings.py      # /api/settings
-│   │   └── services/            # Business logic
-│   │       ├── task_service.py  # Filtering, searching, sorting, stats calculation
-│   │       └── seed_service.py  # Realistic demo tasks and category seed generator
-│   ├── tests/
-│   │   └── test_api.py          # Comprehensive automated integration test suite
-│   ├── seed_data.py             # CLI database seeding script
-│   ├── requirements.txt         # Python dependencies
-│   └── .env.example             # Configuration template
+│   │   ├── main.py
+│   │   ├── database.py
+│   │   ├── models.py
+│   │   ├── schemas.py
+│   │   ├── auth.py
+│   │   ├── config.py
+│   │   ├── seed.py
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── auth.py
+│   │   │   ├── tasks.py
+│   │   │   ├── categories.py
+│   │   │   ├── tags.py
+│   │   │   ├── reminders.py
+│   │   │   └── users.py
+│   │   │
+│   │   └── utils/
+│   │       ├── security.py
+│   │       └── helpers.py
+│   │
+│   └── tests/
 │
 ├── frontend/
-│   ├── index.html               # Semantic, accessible HTML5 dashboard
+│   ├── index.html
 │   ├── css/
-│   │   ├── style.css            # CSS variables, typography, reset, layout, dark theme
-│   │   ├── components.css       # Buttons, cards, modals, toasts, skeletons, dropdowns
-│   │   └── responsive.css       # Tablet and mobile optimizations, drawer, mobile FAB
 │   ├── js/
-│   │   ├── config.js            # Configuration & endpoints
-│   │   ├── utils.js             # Date helpers, XSS sanitization, debounce
-│   │   ├── api.js               # Centralized REST API client
-│   │   ├── validation.js        # Client-side form input validation
-│   │   ├── ui.js                # Toast system, theme toggling, modal controls
-│   │   ├── auth.js              # Session state, login/register modal
-│   │   ├── tasks.js             # Task card rendering, toggle complete, optimistic UI
-│   │   ├── filters.js           # Navigation tabs, search bar, dropdown filters
-│   │   └── app.js               # App bootstrap and keyboard shortcuts
 │   └── assets/
-│       └── favicon.svg          # Modern SVG icon
 │
-├── schema.sql                   # MySQL database creation script
-├── seed_data.py                 # Root seed data script
-├── run.py                       # Unified server launcher
-├── requirements.txt             # Root dependencies
-├── .env.example                 # Root environment template
-└── README.md                    # Documentation
+├── schema.sql
+├── seed_data.sql
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## ⚡ Quick Start & Installation
+## 🗄️ Database Architecture
 
-### 1. Prerequisites
-- **Python 3.10+** (Tested on Python 3.11)
-- **MySQL / MariaDB via XAMPP** (Listening on `localhost:3306`)
+TaskFlow uses a relational MySQL database.
 
-### 2. Database Initialization
-Ensure your XAMPP MySQL module is started.
+### Core Tables
 
-Import the provided schema into MySQL:
-```bash
-mysql -u root -p < schema.sql
+#### `users`
+
+Stores registered user accounts, authentication information, and account metadata.
+
+#### `user_settings`
+
+Stores user-specific preferences such as theme and notification settings.
+
+#### `tasks`
+
+Stores:
+
+- Task ID
+- User ID
+- Title
+- Description
+- Completion status
+- Important status
+- Priority
+- Due date
+- Category
+- Created timestamp
+- Updated timestamp
+
+#### `categories`
+
+Stores user task categories.
+
+#### `tags`
+
+Stores reusable task tags.
+
+#### `task_tags`
+
+Provides the many-to-many relationship between tasks and tags.
+
+#### `task_reminders`
+
+Stores reminders associated with tasks.
+
+### Database Relationship Diagram
+
+```mermaid
+erDiagram
+    USERS ||--o{ TASKS : creates
+    USERS ||--|| USER_SETTINGS : owns
+    USERS ||--o{ CATEGORIES : creates
+    USERS ||--o{ TAGS : creates
+    CATEGORIES ||--o{ TASKS : organizes
+    TASKS ||--o{ TASK_TAGS : contains
+    TAGS ||--o{ TASK_TAGS : assigned_to
+    TASKS ||--o{ TASK_REMINDERS : has
 ```
-*(Or in phpMyAdmin, import `schema.sql` into the `todo-application` database).*
 
-### 3. Install Python Dependencies
-```bash
-pip install -r requirements.txt
-```
+---
 
-### 4. Configure Environment
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-Default `.env` configuration:
+## ⚙️ Environment Variables
+
+Create a local `.env` file for configuration.
+
+Example:
+
 ```ini
-PROJECT_NAME="TaskFlow"
-VERSION="1.0.0"
-API_V1_PREFIX="/api"
-DATABASE_URL="mysql+pymysql://root:@localhost:3306/todo-application?charset=utf8mb4"
-SECRET_KEY="taskflow_super_secret_production_key_change_in_real_deployment_64char"
-ALGORITHM="HS256"
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=taskflow
+
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
+
+APP_HOST=127.0.0.1
+APP_PORT=8000
 ```
 
-### 5. Seed Realistic Sample Data
-Populate demo user, categories (Work, Personal, Study, Projects), and sample tasks:
+> **Important:** Never commit the actual `.env` file, database password, or JWT secret to GitHub.
+
+---
+
+## 🚀 Local Setup
+
+### 1. Start MySQL
+
+Start MySQL through XAMPP, WAMP, MySQL Server, or another MySQL installation.
+
+Default port:
+
+```text
+3306
+```
+
+### 2. Create Database
+
+```sql
+CREATE DATABASE taskflow;
+```
+
+Import the provided:
+
+```text
+schema.sql
+```
+
+and, if required:
+
+```text
+seed_data.sql
+```
+
+### 3. Create Virtual Environment
+
+Windows:
+
 ```bash
-python seed_data.py
+python -m venv venv
+venv\Scripts\activate
 ```
-**Demo Account Credentials:**
-- **Email:** `demo@taskflow.dev`
-- **Password:** `Password123!`
 
----
+Linux/macOS:
 
-## 🚀 Running the Application
-
-### Single Command Launcher (Serves Frontend & Backend Together):
 ```bash
-python run.py
+python3 -m venv venv
+source venv/bin/activate
 ```
-This boots the FastAPI application via Uvicorn on `http://localhost:8000/`.
 
-- **Web Dashboard:** [http://localhost:8000/](http://localhost:8000/)
-- **Interactive Swagger Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc API Documentation:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+### 4. Install Dependencies
 
----
-
-## 🧪 Running Automated Tests
-
-Run the backend integration test suite:
 ```bash
-python backend/tests/test_api.py
+python -m pip install -r requirements.txt
 ```
-Tests cover:
-- User registration and duplicate check
-- JWT authentication and bad credentials rejection
-- Fetching authenticated profile (`/api/auth/me`)
-- Task creation with priority, tags, categories, and due dates
-- Task search and filtering by query string
-- Updating task title and priority
-- Toggling task completion (persists in DB, updates `completed_at`)
-- Calculation of live dashboard statistics
-- Backend 422 validation errors
-- 401 Unauthorized protection on private endpoints
-- 404 Not Found handling
-- Permanent task deletion
+
+### 5. Configure `.env`
+
+Configure your local MySQL credentials and JWT secret.
 
 ---
 
-## 📡 REST API Reference
+## 💻 Running the Application
 
-All responses return a uniform JSON envelope:
-```json
-{
-  "success": true,
-  "message": "Operation description",
-  "data": { ... }
-}
+Run the backend with Uvicorn:
+
+```bash
+uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-### Authentication (`/api/auth`)
-- `POST /api/auth/register` — Create account, seeds defaults, returns JWT
-- `POST /api/auth/login` — Login with email/password, returns JWT
-- `GET  /api/auth/me` — Get authenticated user details *(Bearer token required)*
-- `POST /api/auth/logout` — Logout user session
+If the project supports direct execution:
 
-### Tasks (`/api/tasks`)
-- `GET    /api/tasks` — List tasks *(Params: `search`, `status`, `priority`, `category_id`, `is_important`, `due_filter`, `sort_by`, `order`)*
-- `GET    /api/tasks/stats` — Live statistics: total, completed, pending, overdue, completion rate %, priority and category breakdowns
-- `POST   /api/tasks` — Create task with title, description, priority, category, due date/time, tags
-- `GET    /api/tasks/{task_id}` — Get single task details
-- `PUT    /api/tasks/{task_id}` — Update task details
-- `PATCH  /api/tasks/{task_id}/complete` — Toggle or explicitly set task completion
-- `DELETE /api/tasks/{task_id}` — Permanently delete task
-- `POST   /api/tasks/seed-demo` — Populate sample tasks on-demand
-
-### Categories (`/api/categories`)
-- `GET    /api/categories` — List user categories with task counts
-- `POST   /api/categories` — Create category with custom color & icon
-- `PUT    /api/categories/{id}` — Update category
-- `DELETE /api/categories/{id}` — Delete category *(tasks set to NULL)*
-
-### User Settings (`/api/settings`)
-- `GET /api/settings` — Get user preferences (theme, default priority)
-- `PUT /api/settings` — Update preferences
-
----
-
-## ⌨️ Keyboard Shortcuts
-
-| Shortcut | Action |
-| :--- | :--- |
-| <kbd>Ctrl</kbd> + <kbd>K</kbd> or <kbd>/</kbd> | Focus global search bar |
-| <kbd>C</kbd> or <kbd>Ctrl</kbd> + <kbd>N</kbd> | Open **New Task** modal |
-| <kbd>Esc</kbd> | Dismiss active modal or mobile drawer |
-| <kbd>?</kbd> | Open Keyboard Shortcuts reference |
-
----
-
-## 📸 Screenshots & UI Showcase
-
+```bash
+python backend/app/main.py
 ```
-+----------------------------------------------------------------------------------------------------+
-|  [Logo] TaskFlow      [ Search tasks, categories, #tags... (Ctrl+K) ]      [🌙] [🔔] [AM Alex M. ▾] |
-+-----------------------+----------------------------------------------------------------------------+
-|  VIEWS                |  All Tasks                                                  [+ Add Task]   |
-|  • All Tasks       8  |  Organize, track progress, and accomplish goals seamlessly.                |
-|  • Today           2  +----------------------------------------------------------------------------+
-|  • Upcoming        4  | [TOTAL: 8]   [COMPLETED: 2]   [PENDING: 5]   [OVERDUE: 0]   [RATE: 25.0% ⭘] |
-|  • Important       4  +----------------------------------------------------------------------------+
-|  • Completed       2  | Filters: [All Statuses ▾] [All Priorities ▾] [All Categories ▾] [Sort ▾]   |
-|                       +----------------------------------------------------------------------------+
-|  CATEGORIES       [+] | [✓] Build FastAPI JWT authentication API              [URGENT] [Projects]  |
-|  • Work            2  |     Implemented password hashing with bcrypt          Due Yesterday        |
-|  • Personal        1  |     #backend #security                                [Edit] [Delete]      |
-|  • Study           3  | -------------------------------------------------------------------------- |
-|  • Projects        2  | [ ] Design responsive dashboard UI in TaskFlow        [HIGH]   [Work]      |
-|                       |     Craft modern SaaS layout with sidebar & cards     Due Today            |
-|  [+ Add New Task]     |     #frontend #ui #responsive                         [Edit] [Delete]      |
-+-----------------------+----------------------------------------------------------------------------+
+
+### Application
+
+```text
+http://127.0.0.1:8000/
 ```
 
 ---
 
-## 🛡 Security & Best Practices
+## 📚 Interactive API Documentation
 
-1. **SQL Injection Prevention:** Uses SQLAlchemy parameterized queries and ORM object graphs.
-2. **Password Security:** Salted hashes using **bcrypt**; raw passwords are never logged or stored.
-3. **User Isolation:** All database queries strictly scope to `user_id = current_user.id`.
-4. **Input Sanitization:** Frontend escapes HTML before rendering user strings; Pydantic strictly validates all JSON bodies.
-5. **CORS Hardening:** Configurable allowed origins in `.env`.
-6. **Graceful Fallbacks:** Connection pool pre-ping handles database connection drops seamlessly.
+FastAPI automatically provides API documentation.
+
+### Swagger UI
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Swagger allows developers to:
+
+- View API endpoints
+- Inspect schemas
+- Test requests
+- Authenticate using Bearer tokens
+- Inspect API responses
+
+### ReDoc
+
+```text
+http://127.0.0.1:8000/redoc
+```
 
 ---
 
-## 🔮 Future Enhancements
+## 📡 REST API Endpoints
 
-- WebSockets for real-time collaboration across multiple devices
-- Email reminders via background Celery or APScheduler workers using `task_reminders`
-- Drag-and-drop Kanban view option alongside List and Grid views
-- Subtasks / checklists hierarchy inside tasks
+> The `/docs` endpoint is the authoritative API reference for the current implementation.
+
+### Authentication
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/auth/me
+```
+
+### Tasks
+
+```text
+GET    /api/tasks
+POST   /api/tasks
+GET    /api/tasks/{id}
+PUT    /api/tasks/{id}
+DELETE /api/tasks/{id}
+```
+
+### Task Actions
+
+```text
+PATCH /api/tasks/{id}/complete
+PATCH /api/tasks/{id}/important
+```
+
+### Categories
+
+```text
+GET    /api/categories
+POST   /api/categories
+PUT    /api/categories/{id}
+DELETE /api/categories/{id}
+```
+
+### Tags
+
+```text
+GET    /api/tags
+POST   /api/tags
+PUT    /api/tags/{id}
+DELETE /api/tags/{id}
+```
+
+### Reminders
+
+```text
+GET    /api/reminders
+POST   /api/reminders
+PUT    /api/reminders/{id}
+DELETE /api/reminders/{id}
+```
+
+### User Settings
+
+```text
+GET /api/users/me/settings
+PUT /api/users/me/settings
+```
 
 ---
 
-## 📄 License
-MIT License. Built with ❤️ for high-performance productivity.
+## 🔄 Task Workflow
+
+```mermaid
+flowchart LR
+    Login[Login] --> Dashboard[Dashboard]
+
+    Dashboard --> Create[Create Task]
+    Dashboard --> Search[Search / Filter]
+    Dashboard --> Stats[Statistics]
+
+    Create --> Organize[Category + Tags + Priority]
+    Organize --> Schedule[Due Date + Reminder]
+
+    Schedule --> Pending[Pending Task]
+    Pending --> Complete[Complete Task]
+
+    Complete --> Completed[Completed Tasks]
+
+    Pending --> Important[Mark Important]
+    Important --> ImportantView[Important Tasks]
+
+    Search --> View[Task Details]
+    View --> Edit[Edit Task]
+    Edit --> Pending
+```
+
+---
+
+## 🧪 Testing
+
+The project includes automated backend/API tests covering important application functionality.
+
+Testing areas include:
+
+- Registration
+- Login
+- Authentication
+- Authorization
+- Task creation
+- Task retrieval
+- Task updates
+- Task deletion
+- Completion
+- Validation
+- Protected endpoints
+- User-specific access
+- API responses
+
+Run unittest:
+
+```bash
+python -m unittest
+```
+
+If pytest is configured:
+
+```bash
+pytest -v
+```
+
+---
+
+## 🛡️ Security
+
+### Password Security
+
+Passwords are hashed using bcrypt before storage.
+
+### JWT Authentication
+
+Protected API requests use JWT Bearer authentication.
+
+```text
+Login
+  ↓
+JWT Token
+  ↓
+Authorization Header
+  ↓
+Protected Endpoint
+  ↓
+Token Validation
+  ↓
+Authorized Request
+```
+
+### Authorization
+
+Users are restricted to resources they are authorized to access.
+
+### Input Validation
+
+Pydantic schemas validate incoming API data.
+
+### Database Security
+
+SQLAlchemy ORM is used for database operations and helps prevent unsafe SQL construction.
+
+### Environment Security
+
+Sensitive credentials remain inside `.env` and should not be committed to GitHub.
+
+---
+
+## ⚡ Performance & UX
+
+TaskFlow includes:
+
+- Optimistic completion interactions
+- Loading skeletons
+- Toast notifications
+- Efficient filtering
+- Search functionality
+- Responsive layouts
+- API-based frontend/backend communication
+- Database-backed organization
+
+---
+
+## 💡 Key Learning Outcomes
+
+This project demonstrates practical experience with:
+
+- Full-stack development
+- FastAPI
+- Python
+- SQLAlchemy
+- MySQL
+- REST API design
+- JWT authentication
+- bcrypt
+- CRUD operations
+- Database relationships
+- Pydantic validation
+- Vanilla JavaScript
+- Responsive UI development
+- Search and filtering
+- Task organization
+- Automated testing
+- Git and GitHub
+- Environment configuration
+- Application security
+
+---
+
+## 👨‍💻 Developer
+
+**Saksham Pandey**
+
+**BS-MS in Artificial Intelligence and Cybersecurity**  
+**IIT Patna**
+
+GitHub:  
+https://github.com/sakshampandey380
+
+LinkedIn:  
+https://www.linkedin.com/in/saksham-pandey-184515250/
+
+---
+
+## 📜 License
+
+This project was developed as part of a **Full-Stack Development Internship / QSkills Assessment** and is intended for educational, demonstration, and portfolio purposes.
